@@ -9,7 +9,6 @@ Microsoft changed the web page so that JavaScript is required.
 
 import random
 import time
-import urllib2
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
