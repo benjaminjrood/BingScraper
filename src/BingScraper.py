@@ -13,7 +13,7 @@ import urllib2
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-DELAY   = (1, 5, 10, 15, 20, 25, 30);
+DELAY   = (5, 10, 15, 20, 25, 30, 60);
 PCEXECS = (40, 50, 60);
 MBEXECS = (30, 40, 50);
 WORDS   = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
