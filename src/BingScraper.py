@@ -88,25 +88,21 @@ if __name__ == '__main__':
         login( driver, username, password );
          
         # Run PC Searches - 30 of them will net 15 credits for the day.
-        # Delay a random amount before and after each search so that they 
-        # don't detect I'm a robot.
+        # Delay a random amount before each search so that they don't detect 
+        # I'm a robot (or at least have a harder time).
         for i in range(0, 30):
             time.sleep( random.choice( DELAY ) );
-             
             query = random.choice( words );
-             
             print "Performing PC search " + str( i ) + "/30: " + query;
             runQuery( driver, query );
-             
-            time.sleep( random.choice( DELAY ) );
 
         print "";
         
         driver.close();
         
         # Run mobile platform searches - 20 of them will net 10 credits for the
-        # day.  As stated above, delay a random amount before and after each
-        # search so that they don't detect I'm a robot.
+        # day.  As stated above, delay a random amount before each search so 
+        # that they don't detect I'm a robot (or at least have a harder time).
         profile = webdriver.FirefoxProfile();
         profile.set_preference( "general.useragent.override", "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0" );
         driver  = webdriver.Firefox( profile );
@@ -115,16 +111,12 @@ if __name__ == '__main__':
         
         for i in range(0, 20):
             time.sleep( random.choice( DELAY ) );
-             
             query = random.choice( words );
-             
             print "Performing Mobile search " + str( i ) + "/20: " + query;
-            runQuery( driver, query );
-             
-            time.sleep( random.choice( DELAY ) );
-        
+            runQuery( driver, query );        
         
         print "---------------------------------------------------------------";
+        
         # Closing the driver effectively logs out.  A bit inefficient, but it
         # works pretty well.
         driver.close();
