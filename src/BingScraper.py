@@ -95,7 +95,7 @@ if __name__ == '__main__':
              
             query = random.choice( words );
              
-            print "Performing PC search " + i + "/30: " + query;
+            print "Performing PC search " + str( i ) + "/30: " + query;
             runQuery( driver, query );
              
             time.sleep( random.choice( DELAY ) );
@@ -118,7 +118,7 @@ if __name__ == '__main__':
              
             query = random.choice( words );
              
-            print "Performing Mobile search " + i + "/20: " + query;
+            print "Performing Mobile search " + str( i ) + "/20: " + query;
             runQuery( driver, query );
              
             time.sleep( random.choice( DELAY ) );
