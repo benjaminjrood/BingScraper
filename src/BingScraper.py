@@ -97,7 +97,7 @@ if __name__ == '__main__':
         for i in range( 0, pcexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing PC search " + str( i ) + "/" + pcexecs + ": " + query;
+            print "Performing PC search " + str( (i + 1) ) + "/" + str( pcexecs ) + ": " + query;
             runQuery( driver, query );
 
         print "";
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         for i in range( 0, mbexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing Mobile search " + str( i ) + "/" + mbexecs + ": " + query;
+            print "Performing Mobile search " + str( (i + 1) ) + "/" + str( mbexecs ) + ": " + query;
             runQuery( driver, query );        
         
         print "---------------------------------------------------------------";
