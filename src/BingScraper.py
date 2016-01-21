@@ -13,8 +13,10 @@ import urllib2
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-DELAY = (1, 5, 10, 15, 20, 25, 30);
-WORDS = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
+DELAY   = (1, 5, 10, 15, 20, 25, 30);
+PCEXECS = (40, 50, 60);
+MBEXECS = (30, 40, 50);
+WORDS   = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
 
 # Add accounts as tuples of (username, password).
 ACCOUNTS = (("Imaliveaccount@gmail.com", "Imapassword"), 
@@ -80,6 +82,8 @@ if __name__ == '__main__':
             
         username = accountPair[0];
         password = accountPair[1];
+        pcexecs  = random.choice( PCEXECS );
+        mbexecs  = random.choice( MBEXECS );
         
         print "---------------------------------------------------------------";
         print "Account: " + username;
@@ -90,10 +94,10 @@ if __name__ == '__main__':
         # Run PC Searches - 30 of them will net 15 credits for the day.
         # Delay a random amount before each search so that they don't detect 
         # I'm a robot (or at least have a harder time).
-        for i in range(0, 30):
+        for i in range( 0, pcexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing PC search " + str( i ) + "/30: " + query;
+            print "Performing PC search " + str( i ) + "/" + pcexecs + ": " + query;
             runQuery( driver, query );
 
         print "";
@@ -109,10 +113,10 @@ if __name__ == '__main__':
         
         login( driver, username, password );
         
-        for i in range(0, 20):
+        for i in range( 0, mbexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing Mobile search " + str( i ) + "/20: " + query;
+            print "Performing Mobile search " + str( i ) + "/" + mbexecs + ": " + query;
             runQuery( driver, query );        
         
         print "---------------------------------------------------------------";
