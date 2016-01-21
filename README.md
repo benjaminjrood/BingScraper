@@ -7,6 +7,7 @@ BingScraper is a Python script that executes Bing queries for the sole purpose o
 * Install Python
 * Clone this repository or directly download BingScraper.py
 * Install [Selenium](http://selenium-python.readthedocs.org/installation.html)
+* Modify the ACCOUNTS list of tuples to contain you Microsoft account login information (username/password).  This list can handle multiple accounts.
 * Once per day, execute: python BingScraper.py
 
 ### Contribution guidelines ###
