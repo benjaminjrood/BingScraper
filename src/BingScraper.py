@@ -84,9 +84,9 @@ if __name__ == '__main__':
         pcexecs  = random.choice( PCEXECS );
         mbexecs  = random.choice( MBEXECS );
         
-        print "---------------------------------------------------------------";
-        print "Account: " + username;
-        print "";
+        print( "---------------------------------------------------------------" );
+        print( "Account: " + username );
+        print( "" );
         
         login( driver, username, password );
          
@@ -96,10 +96,10 @@ if __name__ == '__main__':
         for i in range( 0, pcexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing PC search " + str( (i + 1) ) + "/" + str( pcexecs ) + ": " + query;
+            print( "Performing PC search " + str( (i + 1) ) + "/" + str( pcexecs ) + ": " + query );
             runQuery( driver, query );
 
-        print "";
+        print( "" );
         
         driver.close();
         
@@ -115,10 +115,10 @@ if __name__ == '__main__':
         for i in range( 0, mbexecs ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
-            print "Performing Mobile search " + str( (i + 1) ) + "/" + str( mbexecs ) + ": " + query;
+            print( "Performing Mobile search " + str( (i + 1) ) + "/" + str( mbexecs ) + ": " + query );
             runQuery( driver, query );        
         
-        print "---------------------------------------------------------------";
+        print( "---------------------------------------------------------------" );
         
         # Closing the driver effectively logs out.  A bit inefficient, but it
         # works pretty well.
