@@ -72,9 +72,9 @@ def getCredits( driver ):
     # Waiting a few seconds and refreshing the page seems to allow the login 
     # credentials to propagate properly.
     
-    time.sleep( 3 );
+    time.sleep( 5 );
     driver.refresh();
-    time.sleep( 3 );
+    time.sleep( 5 );
     
     # The following statement finds the elements that contain the currently
     # accumulated credits and the lifetime accumulated credits.  The first 
