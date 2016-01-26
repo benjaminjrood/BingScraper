@@ -126,14 +126,24 @@ def printReport( bcreds, acreds ):
     print( "---------------------------------------------------------------" );    
 
 if __name__ == '__main__':
-    driver = webdriver.Firefox();
-    words  = getWordList( driver, WORDS );
+    driver = [];
     bcreds = {};
     acreds = {};
     
+    rProfile = webdriver.FirefoxProfile();
+    mProfile = webdriver.FirefoxProfile();
+    
+    mProfile.set_preference( "general.useragent.override", "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0" );
+    
+    driver.append( webdriver.Firefox( rProfile ) );
+    driver.append( webdriver.Firefox( mProfile ) );
+    
+    words  = getWordList( driver[0], WORDS );
+    
     for accountPair in ACCOUNTS:
-        if (driver == None):
-            driver = webdriver.Firefox();
+        if ( len( driver ) == 0 ):
+            driver.append( webdriver.Firefox( rProfile ) );
+            driver.append( webdriver.Firefox( mProfile ) );
             
         username = accountPair[0];
         password = accountPair[1];
@@ -142,12 +152,13 @@ if __name__ == '__main__':
         print( "Account: " + username );
         print( "" );
         
-        login( driver, username, password );
+        login( driver[0], username, password );
+        login( driver[1], username, password );
         
         # After logging in, retrieve the current number of credits before 
         # running searches so that a report can be generated.
         
-        credits = getCredits( driver );
+        credits = getCredits( driver[0] );
         bcreds[username] = credits;
         
         # Retrieve the snapshot of credits before running searches, so that a
@@ -160,46 +171,33 @@ if __name__ == '__main__':
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
             print( "Performing PC search " + str( (i + 1) ) + "/" + str( PCEXECS ) + ": " + query );
-            runQuery( driver, query );
+            runQuery( driver[0], query );
   
         print( "" );
-          
-        driver.close();
           
         # Run mobile platform searches - 20 of them will net 10 credits for the
         # day.  As stated above, delay a random amount before each search so 
         # that they don't detect I'm a robot (or at least have a harder time).
-        profile = webdriver.FirefoxProfile();
-        profile.set_preference( "general.useragent.override", "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0" );
-        driver  = webdriver.Firefox( profile );
-          
-        login( driver, username, password );
           
         for i in range( 0, MBEXECS ):
             time.sleep( random.choice( DELAY ) );
             query = random.choice( words );
             print( "Performing Mobile search " + str( (i + 1) ) + "/" + str( MBEXECS ) + ": " + query );
-            runQuery( driver, query );        
+            runQuery( driver[1], query );        
           
         print( "---------------------------------------------------------------" );
-        
-        # Closing the driver effectively logs out.  A bit inefficient, but it
-        # works pretty well.
-        driver.close();
-        driver = None;
-        
-        # Login again, so that we can retrieve the number of credits earned.
-        driver = webdriver.Firefox();
-        login( driver, username, password );
         
         # Retrieve the number of credits after performing searches, so an 
         # effective report may be generated.
         
-        credits = getCredits( driver );
+        credits = getCredits( driver[0] );
         acreds[username] = credits;
         
-        driver.close();
-        driver = None;
+        driver[0].close();
+        driver[1].close();
+        
+        del driver[1];
+        del driver[0];
         
     # Print an effective report on the number of credits earned with this 
     # execution.
