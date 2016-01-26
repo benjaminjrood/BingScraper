@@ -55,7 +55,36 @@ def login( driver, account, password ):
     
     login.send_keys( account );
     passw.send_keys( password );
-    submt.click();   
+    submt.click();
+    
+def getCredits( driver ):
+    """
+        Navigate to www.bing.com/rewards/dashboard and parse the number of
+        currently earned credits and lifetime credits.
+        
+        @param driver: The Selenium webdriver object to use
+        @return: A tuple that contains the number of current credits and the
+                 number of lifetime credits earned.
+    """
+    
+    driver.get( "http://www.bing.com/rewards/dashboard" );
+    
+    # Waiting a few seconds and refreshing the page seems to allow the login 
+    # credentials to propagate properly.
+    
+    time.sleep( 3 );
+    driver.refresh();
+    time.sleep( 3 );
+    
+    # The following statement finds the elements that contain the currently
+    # accumulated credits and the lifetime accumulated credits.  The first 
+    # element in the list will be the current credits, and the second will be 
+    # the lifetime credits.
+    
+    creds = driver.find_elements_by_class_name( 'credits' );
+    
+    return ( creds[0].text, creds[1].text );
+    
     
 def runQuery( driver, query ):
     """
@@ -69,11 +98,38 @@ def runQuery( driver, query ):
     
     qinput = driver.find_element_by_name( 'q' );
     qinput.send_keys( query );
-    qinput.send_keys( Keys.RETURN ); 
+    qinput.send_keys( Keys.RETURN );
+    
+def printReport( bcreds, acreds ):
+    """
+        Prints a report on the total number of earned credits upon execution of
+        this script.
+        
+        @param bcreds: A hashmap of {'account' : (accumulated, lifetime)} before
+                       any searches took place
+        @param acreds: A hashmap of {'account' : (accumulated, lifetime)) after
+                       searching
+    """
+    
+    print( "---------------------------------------------------------------" );
+    print( "Credit Report:" );
+    print( "" );
+    print( "| " + "Account".ljust(40) + "| " + "Before".ljust(10) + "| " + "After".ljust(10) + "| " + "Earned".ljust(10) + "| " + "Lifetime".ljust(10) + " |");
+    
+    for key in bcreds:
+        before = bcreds[key]; # Tuple: (Credits, Lifetime)
+        after  = acreds[key]; # Tuple: (Credits, Lifetime)
+        lftime = after[1];
+        
+        print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + " |" );
+        
+    print( "---------------------------------------------------------------" );    
 
 if __name__ == '__main__':
     driver = webdriver.Firefox();
     words  = getWordList( driver, WORDS );
+    bcreds = {};
+    acreds = {};
     
     for accountPair in ACCOUNTS:
         if (driver == None):
@@ -89,6 +145,15 @@ if __name__ == '__main__':
         print( "" );
         
         login( driver, username, password );
+        
+        # After logging in, retrieve the current number of credits before 
+        # running searches so that a report can be generated.
+        
+        credits = getCredits( driver );
+        bcreds[username] = credits;
+        
+        # Retrieve the snapshot of credits before running searches, so that a
+        # report on the number of credits earned can be generated.
          
         # Run PC Searches - 30 of them will net 15 credits for the day.
         # Delay a random amount before each search so that they don't detect 
@@ -124,3 +189,21 @@ if __name__ == '__main__':
         # works pretty well.
         driver.close();
         driver = None;
+        
+        # Login again, so that we can retrieve the number of credits earned.
+        driver = webdriver.Firefox();
+        login( driver, username, password );
+        
+        # Retrieve the number of credits after performing searches, so an 
+        # effective report may be generated.
+        
+        credits = getCredits( driver );
+        acreds[username] = credits;
+        
+        driver.close();
+        driver = None;
+        
+    # Print an effective report on the number of credits earned with this 
+    # execution.
+    
+    printReport( bcreds, acreds );
