@@ -47,6 +47,8 @@ def login( driver, account, password ):
     
     driver.get( "http://login.live.com" );
     
+    time.sleep( 2 );
+    
     # Get the elements to fill in and the button to click to login.
     
     login = driver.find_element_by_name( 'loginfmt' );
@@ -55,6 +57,9 @@ def login( driver, account, password ):
     
     login.send_keys( account );
     passw.send_keys( password );
+    
+    time.sleep( 2 );
+    
     submt.click();
     
 def getCredits( driver ):
