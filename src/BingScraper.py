@@ -62,6 +62,21 @@ def login( driver, account, password ):
     
     submt.click();
     
+def logout( driver ):
+    """
+        Logout of a Microsoft account.  This allows for another account to be
+        logged in in any subsequent steps.
+        
+        @param driver: The Selenium webdriver object to use
+    """
+    
+    driver.get( "http://login.live.com" );
+    time.sleep( 1 );
+    driver.execute_script( "document.getElementsByClassName('msame_Header')[0].click()" );
+    time.sleep( 1 );
+    driver.execute_script( "document.getElementsByClassName('msame_TxtTrunc')[5].click()" );
+    time.sleep( 1 );
+    
 def getCredits( driver ):
     """
         Navigate to www.bing.com/rewards/dashboard and parse the number of
@@ -146,10 +161,6 @@ if __name__ == '__main__':
     words  = getWordList( driver[0], WORDS );
     
     for accountPair in ACCOUNTS:
-        if ( len( driver ) == 0 ):
-            driver.append( webdriver.Firefox( rProfile ) );
-            driver.append( webdriver.Firefox( mProfile ) );
-            
         username = accountPair[0];
         password = accountPair[1];
         
@@ -198,12 +209,12 @@ if __name__ == '__main__':
         credits = getCredits( driver[0] );
         acreds[username] = credits;
         
-        driver[0].close();
-        driver[1].close();
+        logout( driver[0] );
+        logout( driver[1] );
         
-        del driver[1];
-        del driver[0];
-        
+    driver[0].close();
+    driver[1].close();
+    
     # Print an effective report on the number of credits earned with this 
     # execution.
     
