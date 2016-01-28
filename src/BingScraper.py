@@ -7,6 +7,7 @@ Microsoft changed the web page so that JavaScript is required.
 @author: Benjamin Rood
 '''
 
+import argparse
 import random
 import time
 from selenium import webdriver
@@ -16,10 +17,6 @@ DELAY   = (5, 10, 15, 20, 25, 30, 60);
 PCEXECS = 35;
 MBEXECS = 25;
 WORDS   = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
-
-# Add accounts as tuples of (username, password).
-ACCOUNTS = (("Imaliveaccount@gmail.com", "Imapassword"), 
-            ("Anotheraccount@gmail.com", "anotherpassword"));
 
 def getWordList( driver, source ):
     """
@@ -61,21 +58,6 @@ def login( driver, account, password ):
     time.sleep( 2 );
     
     submt.click();
-    
-def logout( driver ):
-    """
-        Logout of a Microsoft account.  This allows for another account to be
-        logged in in any subsequent steps.
-        
-        @param driver: The Selenium webdriver object to use
-    """
-    
-    driver.get( "http://login.live.com" );
-    time.sleep( 1 );
-    driver.execute_script( "document.getElementsByClassName('msame_Header')[0].click()" );
-    time.sleep( 1 );
-    driver.execute_script( "document.getElementsByClassName('msame_TxtTrunc')[5].click()" );
-    time.sleep( 1 );
     
 def getCredits( driver ):
     """
@@ -149,6 +131,14 @@ if __name__ == '__main__':
     driver = [];
     bcreds = {};
     acreds = {};
+    parser = argparse.ArgumentParser();
+    
+    parser.add_argument( "username",
+                         help = "Specifies the Microsoft account username credential" );
+    parser.add_argument( "password",
+                         help = "Specifies the Microsoft account password" );
+                         
+    args = parser.parse_args();
     
     rProfile = webdriver.FirefoxProfile();
     mProfile = webdriver.FirefoxProfile();
@@ -159,59 +149,52 @@ if __name__ == '__main__':
     driver.append( webdriver.Firefox( mProfile ) );
     
     words  = getWordList( driver[0], WORDS );
+      
+    print( "---------------------------------------------------------------" );
+    print( "Account: " + args.username );
+    print( "" );
+      
+    login( driver[0], args.username, args.password );
+    login( driver[1], args.username, args.password );
+      
+    # After logging in, retrieve the current number of credits before 
+    # running searches so that a report can be generated.
+      
+    credits = getCredits( driver[0] );
+    bcreds[args.username] = credits;
+      
+    # Retrieve the snapshot of credits before running searches, so that a
+    # report on the number of credits earned can be generated.
+         
+    # Run PC Searches - 30 of them will net 15 credits for the day.
+    # Delay a random amount before each search so that they don't detect 
+    # I'm a robot (or at least have a harder time).
+    for i in range( 0, PCEXECS ):
+        time.sleep( random.choice( DELAY ) );
+        query = random.choice( words );
+        print( "Performing PC search " + str( (i + 1) ) + "/" + str( PCEXECS ) + ": " + query );
+        runQuery( driver[0], query );
     
-    for accountPair in ACCOUNTS:
-        username = accountPair[0];
-        password = accountPair[1];
+    print( "" );
         
-        print( "---------------------------------------------------------------" );
-        print( "Account: " + username );
-        print( "" );
+    # Run mobile platform searches - 20 of them will net 10 credits for the
+    # day.  As stated above, delay a random amount before each search so 
+    # that they don't detect I'm a robot (or at least have a harder time).
         
-        login( driver[0], username, password );
-        login( driver[1], username, password );
+    for i in range( 0, MBEXECS ):
+        time.sleep( random.choice( DELAY ) );
+        query = random.choice( words );
+        print( "Performing Mobile search " + str( (i + 1) ) + "/" + str( MBEXECS ) + ": " + query );
+        runQuery( driver[1], query );        
         
-        # After logging in, retrieve the current number of credits before 
-        # running searches so that a report can be generated.
-        
-        credits = getCredits( driver[0] );
-        bcreds[username] = credits;
-        
-        # Retrieve the snapshot of credits before running searches, so that a
-        # report on the number of credits earned can be generated.
-           
-        # Run PC Searches - 30 of them will net 15 credits for the day.
-        # Delay a random amount before each search so that they don't detect 
-        # I'm a robot (or at least have a harder time).
-        for i in range( 0, PCEXECS ):
-            time.sleep( random.choice( DELAY ) );
-            query = random.choice( words );
-            print( "Performing PC search " + str( (i + 1) ) + "/" + str( PCEXECS ) + ": " + query );
-            runQuery( driver[0], query );
-  
-        print( "" );
-          
-        # Run mobile platform searches - 20 of them will net 10 credits for the
-        # day.  As stated above, delay a random amount before each search so 
-        # that they don't detect I'm a robot (or at least have a harder time).
-          
-        for i in range( 0, MBEXECS ):
-            time.sleep( random.choice( DELAY ) );
-            query = random.choice( words );
-            print( "Performing Mobile search " + str( (i + 1) ) + "/" + str( MBEXECS ) + ": " + query );
-            runQuery( driver[1], query );        
-          
-        print( "---------------------------------------------------------------" );
-        
-        # Retrieve the number of credits after performing searches, so an 
-        # effective report may be generated.
-        
-        credits = getCredits( driver[0] );
-        acreds[username] = credits;
-        
-        logout( driver[0] );
-        logout( driver[1] );
-        
+    print( "---------------------------------------------------------------" );
+     
+    # Retrieve the number of credits after performing searches, so an 
+    # effective report may be generated.
+      
+    credits = getCredits( driver[0] );
+    acreds[args.username] = credits;
+    
     driver[0].close();
     driver[1].close();
     
