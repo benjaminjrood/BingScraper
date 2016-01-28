@@ -3,7 +3,7 @@
 # A script to run the BingScraper Python script, generate a report,
 # and send the report via email.
 #
-# Date: January 4, 2016
+# Date: January 28, 2016
 
 WORKDIR=`mktemp -d`
 REPORTFILE=$WORKDIR/report.txt
@@ -15,19 +15,22 @@ RUN=1
 
 function print()
 {
-	echo "$1" >> $OUTPUTFILE
+	echo "$1" | tee -a $OUTPUTFILE
 }
 
 function printn()
 {
-	echo -n "$1" >> $OUTPUTFILE
+	echo -n "$1" | tee -a $OUTPUTFILE
 }
 
-cd /home/pi/Downloads/bingscraper/src
+# Uncomment and set directory to the location of the BingScraper script if 
+# running as a cron job.
+#cd /home/pi/Downloads/bingscraper/src
 
-print "Subject: BingScraper Report for $DATE"
-print ""
-print ""
+# Uncomment if the output of the script is to be sent in an email report.
+#print "Subject: BingScraper Report for $DATE"
+#print ""
+#print ""
 printn "Checking for python..."
 
 if [[ ! -f $PYTHON ]];
@@ -42,18 +45,14 @@ if [[ $RUN -eq 1 ]];
 then
 	printn "[OK]"
 	print ""
-	printn "Executing BingScraper script..."
+	print "Executing BingScraper script..."
 
-	$PYTHON $SCRIPT > $REPORTFILE & wait
-
-	printn "[DONE]"
-	print ""
-	print ""
-	print "Output:"
-	print ""
+	$PYTHON $SCRIPT "$1" "$2" | tee -a $REPORTFILE
 fi
 
 cat $REPORTFILE >> $OUTPUTFILE
 
-/usr/sbin/ssmtp EMAIL_HERE < $OUTPUTFILE
+# Uncomment if the report is to be sent to an email address.  You must configure
+# ssmtp before using this.
+#/usr/sbin/ssmtp iamsomeuser@gmail.com < $OUTPUTFILE
 
