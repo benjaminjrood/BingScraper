@@ -5,11 +5,20 @@
 #
 # Date: January 28, 2016
 
-WORKDIR=`mktemp -d`
+SYSTEM=`uname -s`
+
+if [[ "$SYSTEM" == "Darwin" ]];
+then
+	WORKDIR=`mktemp -d /tmp/bingscraper.XXXX`
+	PYTHON=`which python3`
+else
+	WORKDIR=`mktemp -d`
+	PYTHON=`which python`
+fi
+
 REPORTFILE=$WORKDIR/report.txt
 OUTPUTFILE=$WORKDIR/output.txt
 SCRIPT=./BingScraper.py
-PYTHON=`which python`
 DATE=`date`
 RUN=1
 
@@ -31,12 +40,26 @@ function printn()
 #print "Subject: BingScraper Report for $DATE"
 #print ""
 #print ""
+
 printn "Checking for python..."
 
 if [[ ! -f $PYTHON ]];
 then
 	print ""
 	print "[ERROR] Python not found."
+	print ""
+	RUN=0
+fi
+
+# Require Python 3.
+
+PYVERSION=`$PYTHON --version | cut -d ' ' -f 2 | cut -d '.' -f 1`
+
+if [[ "$PYVERSION" != "3" ]];
+then
+	print ""
+	print "[ERROR] Incorrect version of python: $PYVERSION"
+	print "[ERROR] Python 3 is required"
 	print ""
 	RUN=0
 fi
