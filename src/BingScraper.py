@@ -125,10 +125,10 @@ def printReport( bcreds, acreds ):
         after  = acreds[key]; # Tuple: (Credits, Lifetime, %)
         lftime = after[1];
         pctcmp = after[2];
-        
-        print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + + "| " + pctcmp.just(10) +  " |" );
-        
-    print( "---------------------------------------------------------------" );    
+
+        print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + "| " + pctcmp.ljust(10) +  " |" );
+
+    print( "---------------------------------------------------------------" );
 
 if __name__ == '__main__':
     driver = [];
