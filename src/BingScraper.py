@@ -65,8 +65,9 @@ def getCredits( driver ):
         currently earned credits and lifetime credits.
         
         @param driver: The Selenium webdriver object to use
-        @return: A tuple that contains the number of current credits and the
-                 number of lifetime credits earned.
+        @return: A tuple that contains the number of current credits, the
+                 number of lifetime credits earned, and the percentage towards
+                 the currently selected goal.
     """
     
     driver.get( "http://www.bing.com/rewards/dashboard" );
@@ -84,8 +85,9 @@ def getCredits( driver ):
     # the lifetime credits.
     
     creds = driver.find_elements_by_class_name( 'credits' );
+    perct = driver.find_elements_by_class_name( 'progress-percentage' );
     
-    return ( creds[0].text, creds[1].text );
+    return ( creds[0].text, creds[1].text, perct[0].text );
     
     
 def runQuery( driver, query ):
@@ -107,23 +109,24 @@ def printReport( bcreds, acreds ):
         Prints a report on the total number of earned credits upon execution of
         this script.
         
-        @param bcreds: A hashmap of {'account' : (accumulated, lifetime)} before
+        @param bcreds: A hashmap of {'account' : (accumulated, lifetime, %)} before
                        any searches took place
-        @param acreds: A hashmap of {'account' : (accumulated, lifetime)) after
+        @param acreds: A hashmap of {'account' : (accumulated, lifetime, %)) after
                        searching
     """
     
     print( "---------------------------------------------------------------" );
     print( "Credit Report:" );
     print( "" );
-    print( "| " + "Account".ljust(40) + "| " + "Before".ljust(10) + "| " + "After".ljust(10) + "| " + "Earned".ljust(10) + "| " + "Lifetime".ljust(10) + " |");
+    print( "| " + "Account".ljust(40) + "| " + "Before".ljust(10) + "| " + "After".ljust(10) + "| " + "Earned".ljust(10) + "| " + "Lifetime".ljust(10) + "| " + "Progress".ljust(10) + " |" );
     
     for key in bcreds:
-        before = bcreds[key]; # Tuple: (Credits, Lifetime)
-        after  = acreds[key]; # Tuple: (Credits, Lifetime)
+        before = bcreds[key]; # Tuple: (Credits, Lifetime, %)
+        after  = acreds[key]; # Tuple: (Credits, Lifetime, %)
         lftime = after[1];
+        pctcmp = after[2];
         
-        print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + " |" );
+        print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + + "| " + pctcmp.just(10) +  " |" );
         
     print( "---------------------------------------------------------------" );    
 
