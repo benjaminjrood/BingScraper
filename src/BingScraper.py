@@ -114,10 +114,8 @@ def printReport( bcreds, acreds ):
         @param acreds: A hashmap of {'account' : (accumulated, lifetime, %)) after
                        searching
     """
-    
-    print( "---------------------------------------------------------------" );
-    print( "Credit Report:" );
-    print( "" );
+
+    print( "--------------------------------------------------------------------------------------------------------" );
     print( "| " + "Account".ljust(40) + "| " + "Before".ljust(10) + "| " + "After".ljust(10) + "| " + "Earned".ljust(10) + "| " + "Lifetime".ljust(10) + "| " + "Progress".ljust(10) + " |" );
     
     for key in bcreds:
@@ -128,7 +126,7 @@ def printReport( bcreds, acreds ):
 
         print( "| " + key.ljust(40) + "| " + before[0].ljust(10) + "| " + after[0].ljust(10) + "| " + str(int(after[0]) - int(before[0])).ljust(10) + "| " + lftime.ljust(10) + "| " + pctcmp.ljust(10) +  " |" );
 
-    print( "---------------------------------------------------------------" );
+    print( "--------------------------------------------------------------------------------------------------------" );
 
 if __name__ == '__main__':
     driver = [];
@@ -152,8 +150,8 @@ if __name__ == '__main__':
     driver.append( webdriver.Firefox( mProfile ) );
     
     words  = getWordList( driver[0], WORDS );
-      
-    print( "---------------------------------------------------------------" );
+
+    print( "--------------------------------------------------------------------------------------------------------" );
     print( "Account: " + args.username );
     print( "" );
       
@@ -188,11 +186,11 @@ if __name__ == '__main__':
         time.sleep( random.choice( DELAY ) );
         query = random.choice( words );
         print( "Performing Mobile search " + str( (i + 1) ) + "/" + str( MBEXECS ) + ": " + query );
-        runQuery( driver[1], query );        
-        
-    print( "---------------------------------------------------------------" );
-     
-    # Retrieve the number of credits after performing searches, so an 
+        runQuery( driver[1], query );
+
+    print( "--------------------------------------------------------------------------------------------------------" );
+
+    # Retrieve the number of credits after performing searches, so an
     # effective report may be generated.
       
     credits = getCredits( driver[0] );
