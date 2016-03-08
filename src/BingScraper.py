@@ -17,6 +17,7 @@ DELAY    = (5, 10, 15, 20, 25, 30, 60);
 PCEXECS  = 35;
 MBEXECS  = 25;
 WORDS    = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
+BTIMEOUT = 30;
 CTIMEOUT = 5;
 
 def getWordList( driver, source ):
@@ -140,6 +141,11 @@ if __name__ == '__main__':
                          help = "Specifies the Microsoft account username credential" );
     parser.add_argument( "password",
                          help = "Specifies the Microsoft account password" );
+    parser.add_argument( "-b",
+                         dest = "browserTimeout",
+                         type = int,
+                         default = BTIMEOUT,
+                         help = "Specifies the timeout (in seconds) used when connecting to the browser instance (default=30)" );
     parser.add_argument( "-t",
                          dest = "timeout",
                          type = int,
@@ -161,9 +167,9 @@ if __name__ == '__main__':
     mProfile = webdriver.FirefoxProfile();
     
     mProfile.set_preference( "general.useragent.override", "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0" );
-    
-    driver.append( webdriver.Firefox( rProfile ) );
-    driver.append( webdriver.Firefox( mProfile ) );
+
+    driver.append( webdriver.Firefox( firefox_profile = rProfile, timeout = args.browserTimeout ) );
+    driver.append( webdriver.Firefox( firefox_profile = mProfile, timeout = args.browserTimeout ) );
     
     words  = getWordList( driver[0], WORDS );
 
@@ -216,7 +222,7 @@ if __name__ == '__main__':
     driver[1].close();
     
     if ( args.xvfb ):
-        vdisplay.stop()
+        vdisplay.stop();
     
     # Print an effective report on the number of credits earned with this 
     # execution.
