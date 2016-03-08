@@ -144,9 +144,18 @@ if __name__ == '__main__':
                          dest = "timeout",
                          type = int,
                          default = CTIMEOUT,
-                         help = "Specifies the timeout (in seconds) used when retrieving the credit report (default=5)" ); 
-                         
+                         help = "Specifies the timeout (in seconds) used when retrieving the credit report (default=5)" );
+    parser.add_argument( "-x",
+                         dest = "xvfb",
+                         action = "store_true",
+                         help = "Configures BingScraper to use a virtual display.  Use this if running in headless mode." ); 
+
     args = parser.parse_args();
+    
+    if ( args.xvfb ):
+        from xvfbwrapper import Xvfb
+        vdisplay = Xvfb( width=1280, height=1024 );
+        vdisplay.start();
     
     rProfile = webdriver.FirefoxProfile();
     mProfile = webdriver.FirefoxProfile();
@@ -205,6 +214,9 @@ if __name__ == '__main__':
     
     driver[0].close();
     driver[1].close();
+    
+    if ( args.xvfb ):
+        vdisplay.stop()
     
     # Print an effective report on the number of credits earned with this 
     # execution.
