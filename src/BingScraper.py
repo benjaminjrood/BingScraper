@@ -13,10 +13,11 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
-DELAY   = (5, 10, 15, 20, 25, 30, 60);
-PCEXECS = 35;
-MBEXECS = 25;
-WORDS   = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
+DELAY    = (5, 10, 15, 20, 25, 30, 60);
+PCEXECS  = 35;
+MBEXECS  = 25;
+WORDS    = "http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt";
+CTIMEOUT = 5;
 
 def getWordList( driver, source ):
     """
@@ -59,12 +60,13 @@ def login( driver, account, password ):
     
     submt.click();
     
-def getCredits( driver ):
+def getCredits( driver, timeout ):
     """
         Navigate to www.bing.com/rewards/dashboard and parse the number of
         currently earned credits and lifetime credits.
         
         @param driver: The Selenium webdriver object to use
+        @param timeout: The refresh timeout value
         @return: A tuple that contains the number of current credits, the
                  number of lifetime credits earned, and the percentage towards
                  the currently selected goal.
@@ -75,9 +77,9 @@ def getCredits( driver ):
     # Waiting a few seconds and refreshing the page seems to allow the login 
     # credentials to propagate properly.
     
-    time.sleep( 5 );
+    time.sleep( timeout );
     driver.refresh();
-    time.sleep( 5 );
+    time.sleep( timeout );
     
     # The following statement finds the elements that contain the currently
     # accumulated credits and the lifetime accumulated credits.  The first 
@@ -138,6 +140,11 @@ if __name__ == '__main__':
                          help = "Specifies the Microsoft account username credential" );
     parser.add_argument( "password",
                          help = "Specifies the Microsoft account password" );
+    parser.add_argument( "-t",
+                         dest = "timeout",
+                         type = int,
+                         default = CTIMEOUT,
+                         help = "Specifies the timeout (in seconds) used when retrieving the credit report (default=5)" ); 
                          
     args = parser.parse_args();
     
@@ -161,7 +168,7 @@ if __name__ == '__main__':
     # After logging in, retrieve the current number of credits before 
     # running searches so that a report can be generated.
       
-    credits = getCredits( driver[0] );
+    credits = getCredits( driver[0], args.timeout );
     bcreds[args.username] = credits;
       
     # Retrieve the snapshot of credits before running searches, so that a
@@ -193,7 +200,7 @@ if __name__ == '__main__':
     # Retrieve the number of credits after performing searches, so an
     # effective report may be generated.
       
-    credits = getCredits( driver[0] );
+    credits = getCredits( driver[0], args.timeout );
     acreds[args.username] = credits;
     
     driver[0].close();
