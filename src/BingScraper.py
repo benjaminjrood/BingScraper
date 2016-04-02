@@ -46,7 +46,7 @@ def login( driver, account, password ):
     
     driver.get( "http://login.live.com" );
     
-    time.sleep( 2 );
+    time.sleep( 5 );
     
     # Get the elements to fill in and the button to click to login.
     
