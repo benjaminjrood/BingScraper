@@ -52,7 +52,7 @@ def login( driver, account, password ):
     
     login = driver.find_element_by_name( 'loginfmt' );
     passw = driver.find_element_by_name( 'passwd' );
-    submt = driver.find_element_by_name( 'SI' );
+    submt = driver.find_element_by_xpath( "//input[@type='submit'][@value='Sign in']" )
     
     login.send_keys( account );
     passw.send_keys( password );
